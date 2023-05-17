@@ -21,12 +21,11 @@ func New(defaultSize int64) *BufferPool {
 
 func (bp *BufferPool) Get() (buf *bytes.Buffer) {
 	bp.mux.Lock()
-	if len(bp.buffers) > 1 {
+	if len(bp.buffers) > 0 {
 		buf = bp.buffers[len(bp.buffers)-1]
 		bp.buffers = bp.buffers[:len(bp.buffers)-1]
 	} else {
 		buf = bytes.NewBuffer(make([]byte, bp.defaultSize))
-		bp.buffers = append(bp.buffers, buf)
 	}
 	bp.mux.Unlock()
 	return buf

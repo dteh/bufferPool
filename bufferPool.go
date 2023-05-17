@@ -8,11 +8,14 @@ import (
 type BufferPool struct {
 	mux     sync.Mutex
 	buffers []*bytes.Buffer
+
+	defaultSize int64
 }
 
-func New() *BufferPool {
+func New(defaultSize int64) *BufferPool {
 	return &BufferPool{
-		buffers: []*bytes.Buffer{},
+		defaultSize: defaultSize,
+		buffers:     []*bytes.Buffer{},
 	}
 }
 
@@ -22,7 +25,7 @@ func (bp *BufferPool) Get() (buf *bytes.Buffer) {
 		buf = bp.buffers[len(bp.buffers)-1]
 		bp.buffers = bp.buffers[:len(bp.buffers)-2]
 	} else {
-		buf = bytes.NewBuffer([]byte{})
+		buf = bytes.NewBuffer(make([]byte, bp.defaultSize))
 		bp.buffers = append(bp.buffers, buf)
 	}
 	bp.mux.Unlock()

@@ -23,7 +23,7 @@ func (bp *BufferPool) Get() (buf *bytes.Buffer) {
 	bp.mux.Lock()
 	if len(bp.buffers) > 1 {
 		buf = bp.buffers[len(bp.buffers)-1]
-		bp.buffers = bp.buffers[:len(bp.buffers)-2]
+		bp.buffers = bp.buffers[:len(bp.buffers)-1]
 	} else {
 		buf = bytes.NewBuffer(make([]byte, bp.defaultSize))
 		bp.buffers = append(bp.buffers, buf)
